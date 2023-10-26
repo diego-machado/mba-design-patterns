@@ -1,6 +1,8 @@
-import { ContractDatabaseRepository } from "../src/ContractDatabaseRepository";
-import { ContractRespository } from "../src/ContractRepository";
-import { GenerateInvoices } from "../src/GenerateInvoices";
+
+import ContractDatabaseRepository from "../src/infra/repository/ContractDatabaseRepository";
+import ContractRespository from "../src/application/repository/ContractRepository";
+import CsvPresenter from "../src/infra/presenter/CsvPresenter";
+import GenerateInvoices from "../src/application/usecase/GenerateInvoices";
 import DatabaseConnection from "../src/infra/database/DatabaseConnection";
 import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
 
@@ -44,7 +46,7 @@ test("Deve gerar as notas fiscais por regime de caixa", async () => {
   }
 
   const output = await generateInvoices.execute(input);
-  expect(output[0]?.date).toBe("2022-01-05");
+  expect(output[0]?.date).toEqual(new Date("2022-01-05T13:00:00Z"));
   expect(output[0]?.amount).toBe(6000);
 });
 
@@ -56,7 +58,7 @@ test("Deve gerar as notas fiscais por regime de competência", async () => {
   }
 
   const output = await generateInvoices.execute(input);
-  expect(output[0]?.date).toBe("2022-01-01");
+  expect(output[0]?.date).toEqual(new Date("2022-01-01T13:00:00Z"));
   expect(output[0]?.amount).toBe(500);
 });
 
@@ -68,8 +70,20 @@ test("Deve gerar as notas fiscais por regime de competência", async () => {
   }
 
   const output = await generateInvoices.execute(input);
-  expect(output[0]?.date).toBe("2022-02-01");
+  expect(output[0]?.date).toEqual(new Date("2022-02-01T13:00:00Z"));
   expect(output[0]?.amount).toBe(500);
+});
+
+test("Deve gerar as notas fiscais por regime de competência por csv", async () => {
+  const input = {
+    month: 2,
+    year: 2022,
+    type: "accrual",
+  }
+  const presenter = new CsvPresenter();
+  const generateInvoices = new GenerateInvoices(contractRepository, presenter);
+  const output = await generateInvoices.execute(input);
+  expect(output).toBe("2022-02-01;500");
 });
 
 

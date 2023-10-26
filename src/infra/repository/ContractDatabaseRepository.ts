@@ -1,9 +1,9 @@
-import { Contract } from "./Contract";
-import { ContractRespository } from "./ContractRepository";
-import { Payment } from "./Payment";
-import DatabaseConnection from "./infra/database/DatabaseConnection";
+import Contract from "../../domain/Contract";
+import ContractRespository from "../../application/repository/ContractRepository";
+import Payment from "../../domain/Payment";
+import DatabaseConnection from "../database/DatabaseConnection";
 
-export class ContractDatabaseRepository implements ContractRespository {
+export default class ContractDatabaseRepository implements ContractRespository {
   constructor(private readonly connection: DatabaseConnection) { }
   async list(): Promise<Contract[]> {
     const contracts: Contract[] = [];

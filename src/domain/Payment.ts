@@ -1,4 +1,4 @@
-export class Payment {
+export default class Payment {
   constructor(
     readonly idPayment: string,
     readonly date: Date,
